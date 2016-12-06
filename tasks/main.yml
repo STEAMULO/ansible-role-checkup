@@ -6,6 +6,13 @@
   stat: path=/var/run/reboot-required
   register: need_reboot
 
+- name: Check ufw rules
+  become: true
+  shell: ufw status
+  register: ufw_status
+  changed_when: false
+  ignore_errors: true
+
 - name: Generate report
   become: false
   local_action: template dest="{{ checkup_local_report_path }}" src="report.j2"
