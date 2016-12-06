@@ -21,8 +21,6 @@ Dependencies
 Example Playbook
 ----------------
 
-# Exemple d'ajout d'un compte xxxx avec accès ssh pour toto :
-
     - hosts: all
       vars:
         checkup_print_details: true
