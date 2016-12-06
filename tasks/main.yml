@@ -1,0 +1,16 @@
+---
+# tasks file for ansible-role-checkup
+
+- name: Check if reboot is needed
+  become: true
+  stat: path=/var/run/reboot-required
+  register: need_reboot
+
+- name: Generate report
+  become: false
+  local_action: template dest="{{ checkup_local_report_path }}" src="report.j2"
+  run_once: true
+
+- debug: msg="Report is at file://{{ checkup_local_report_path }}"
+  delegate_to: localhost
+  run_once: true

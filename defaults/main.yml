@@ -1,0 +1,5 @@
+---
+# defaults file for ansible-role-checkup
+
+checkup_local_report_path: "{{ playbook_dir }}/report.html"
+checkup_print_details: false

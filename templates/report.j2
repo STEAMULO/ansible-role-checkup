@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ansible checkup</title>
+<style>
+    table {
+        border:3px solid #6495ed;
+        border-collapse:collapse;
+        width:90%;
+        margin:20px auto;
+    }
+    thead, tfoot {
+        background-color:#D0E3FA;
+        border:1px solid #6495ed;
+    }
+    tbody {
+        background-color:#FFFFFF;
+        border:1px solid #6495ed;
+    }
+    tr { max-height: 50px; }
+    th {
+        font-family:monospace;
+        border:1px dotted #6495ed;
+        padding:5px;
+        background-color:#EFF6FF;
+        width:25%;
+    }
+    thead th{
+        background-color:#b9d7ff;
+    }
+    td {
+        font-family:sans-serif;
+        font-size:80%;
+        border:1px solid #6495ed;
+        padding:5px;
+        text-align:left;
+    }
+    pre {
+        height: 100px;
+        width: 500px;
+        overflow: auto;
+    }
+    .error{ color: red; }
+    .ok{ color: green; }
+    .ko{ color: red; }
+</style>
+</head>
+
+<body>
+<i>Generation date : {{ ansible_date_time.date }} {{ ansible_date_time.time }}</i>
+<br />
+<table>
+<thead>
+    <tr>
+        <th>Host</th>
+        <th>Server Date</th>
+        <th>Swap</th>
+        <th>Need reboot</th>
+        {% if checkup_print_details %}<th>Host vars</th>{% endif %}
+    </tr>
+</thead>
+<tbody>
+{% for i in play_hosts | sort %}
+{% if hostvars[i]['ansible_date_time'] is defined %}
+    <tr>
+        <th>{{ i }}</th>
+        <td>{{ hostvars[i]['ansible_date_time']['date'] }} {{ hostvars[i]['ansible_date_time']['time'] }}</td>
+        <td>{{ hostvars[i]['ansible_memory_mb']['swap']['used'] }}/{{ hostvars[i]['ansible_memory_mb']['swap']['total'] }} MB</td>
+        <td class="{{ hostvars[i]['need_reboot']['stat']['exists'] | ternary('ok', 'ko') }}">{{ hostvars[i]['need_reboot']['stat']['exists'] | ternary('Yes', 'No') }}</td>
+        {% if checkup_print_details %}<td><pre><code>{{ hostvars[i] | to_nice_yaml(indent=2) }}</code></pre></td>{% endif %}
+    </tr>
+{% else %}
+    <tr class=error">
+        <th>{{ i }}</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+{% endif %}
+{% endfor %}
+</tbody>
+</table>
+</body>
+
+</html>

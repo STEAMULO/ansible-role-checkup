@@ -1,0 +1,9 @@
+---
+
+- hosts: vagrant-machine
+  name: Test role for checkup
+  become: false
+  roles:
+    - ../../ansible-role-checkup
+  vars_files:
+    - test-vars
