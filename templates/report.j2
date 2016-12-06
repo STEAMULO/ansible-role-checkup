@@ -25,6 +25,7 @@
         padding:5px;
         background-color:#EFF6FF;
         width:25%;
+        white-space: nowrap;
     }
     thead th{
         background-color:#b9d7ff;
@@ -35,13 +36,14 @@
         border:1px solid #6495ed;
         padding:5px;
         text-align:left;
+        white-space: nowrap;
     }
-    pre {
+    .vars pre {
         height: 100px;
-        width: 500px;
+        width: 400px;
         overflow: auto;
     }
-    .error{ color: red; }
+    .error * { color: red; }
     .ok{ color: green; }
     .ko{ color: red; }
 </style>
@@ -54,7 +56,11 @@
 <thead>
     <tr>
         <th>Host</th>
+        <th>Ansible groups</th>
         <th>Server Date</th>
+        <th>OS</th>
+        <th>IPv4 Addresses</th>
+        <th>IPv6 Addresses</th>
         <th>Swap</th>
         <th>Need reboot</th>
         {% if checkup_print_details %}<th>Host vars</th>{% endif %}
@@ -65,18 +71,26 @@
 {% if hostvars[i]['ansible_date_time'] is defined %}
     <tr>
         <th>{{ i }}</th>
+        <td><pre><code>{{ hostvars[i]['group_names'] | to_nice_yaml(indent=2) }}</code></pre></td>
         <td>{{ hostvars[i]['ansible_date_time']['date'] }} {{ hostvars[i]['ansible_date_time']['time'] }}</td>
+        <td>{{ hostvars[i]['ansible_lsb']['description'] }}</td>
+        <td><pre><code>{{ hostvars[i]['ansible_all_ipv4_addresses'] | to_nice_yaml(indent=2) }}</code></pre></td>
+        <td><pre><code>{{ hostvars[i]['ansible_all_ipv6_addresses'] | to_nice_yaml(indent=2) }}</code></pre></td>
         <td>{{ hostvars[i]['ansible_memory_mb']['swap']['used'] }}/{{ hostvars[i]['ansible_memory_mb']['swap']['total'] }} MB</td>
-        <td class="{{ hostvars[i]['need_reboot']['stat']['exists'] | ternary('ok', 'ko') }}">{{ hostvars[i]['need_reboot']['stat']['exists'] | ternary('Yes', 'No') }}</td>
-        {% if checkup_print_details %}<td><pre><code>{{ hostvars[i] | to_nice_yaml(indent=2) }}</code></pre></td>{% endif %}
+        <td class="{{ hostvars[i]['need_reboot']['stat']['exists'] | ternary('ko', 'ok') }}">{{ hostvars[i]['need_reboot']['stat']['exists'] | ternary('Yes', 'No') }}</td>
+        {% if checkup_print_details %}<td class="vars"><pre><code>{{ hostvars[i] | to_nice_yaml(indent=2) }}</code></pre></td>{% endif %}
     </tr>
 {% else %}
-    <tr class=error">
+    <tr class="error">
         <th>{{ i }}</th>
         <td></td>
         <td></td>
         <td></td>
         <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        {% if checkup_print_details %}<td></td>{% endif %}
     </tr>
 {% endif %}
 {% endfor %}
