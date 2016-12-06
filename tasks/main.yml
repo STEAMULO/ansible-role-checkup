@@ -13,6 +13,22 @@
   changed_when: false
   ignore_errors: true
 
+- name: Get all users
+  become: true
+  shell: awk -F':' '$2 ~ "\$" {print $1}' /etc/shadow
+  register: all_users
+  changed_when: false
+  ignore_errors: true
+
+- name: Get all ssh keys
+  become: true
+  become_user: "{{ item }}"
+  shell: cat ~/.ssh/authorized_keys* || return 0
+  register: all_users_sshkeys
+  with_items: "{{ all_users.stdout_lines }}"
+  changed_when: false
+  ignore_errors: true
+
 - name: Generate report
   become: false
   local_action: template dest="{{ checkup_local_report_path }}" src="report.j2"
