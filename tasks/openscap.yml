@@ -1,0 +1,29 @@
+---
+# tasks file for ansible-role-checkup
+
+- name: Install OpenSCAP Base
+  tags: openscap_install
+  become: yes
+  apt: name="libopenscap8" update_cache=yes state=latest
+
+- name: Get OVAL file
+  tags: oval
+  get_url:
+    url:  "{{ oval_url }}"
+    dest: "{{ oval_path }}"
+
+- name: Run OpenSCAP analysis
+  tags: openscap_run
+  command: oscap oval eval --results {{ result_path }} --report {{ report_path }} {{ oval_path }}
+
+- name: Fetch OpenSCAP report
+  tags: fetch_report
+  fetch:
+    src: "{{ report_path }}"
+    dest: "{{ playbook_dir }}/"
+    flat: yes
+    validate: /usr/sbin/visudo -cf %s
+
+- debug: msg="OpenSCAP Report is at file://{{ playbook_dir }}/{{ report_filename }}"
+  delegate_to: localhost
+  run_once: true

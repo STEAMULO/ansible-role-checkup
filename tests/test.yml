@@ -1,5 +1,14 @@
 ---
 
+# Pour les Ubuntu 16.04 en particulier, Ansible ne fonctionnera pas si python 2.7 n'est pas installé
+- hosts: vagrant-machine
+  become: true
+  gather_facts: False
+  tasks:
+    - name: install python 2
+      raw: test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)
+      tags: python
+
 - hosts: vagrant-machine
   name: Test role for checkup
   become: false

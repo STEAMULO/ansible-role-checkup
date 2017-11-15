@@ -1,6 +1,8 @@
 ---
 # tasks file for ansible-role-checkup
 
+- import_tasks: openscap.yml
+
 - name: Check if reboot is needed
   become: true
   stat: path=/var/run/reboot-required
