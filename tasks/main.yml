@@ -3,6 +3,8 @@
 
 - import_tasks: openscap.yml
 
+- import_tasks: lynis.yml
+
 - name: Check if reboot is needed
   become: true
   stat: path=/var/run/reboot-required

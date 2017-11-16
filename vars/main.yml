@@ -2,11 +2,17 @@
 # vars file for ansible-role-checkup
 
 # vars for openSCAP
+openscap_dir: "/tmp/"
 oval_filename: "oval.xml"
 oval_url: "https://people.canonical.com/~ubuntu-security/oval/com.ubuntu.{{ ansible_distribution_release }}.cve.oval.xml"
-oval_path: "/tmp/{{ oval_filename }}"
-result_filename: "results-openscap.xml"
-result_path: "/tmp/{{ result_filename }}"
-report_filename: "report-openscap.html"
-report_path: "/tmp/{{ report_filename }}"
+oval_path: "{{ openscap_dir }}{{ oval_filename }}"
+openscap_result_filename: "results-openscap.xml"
+openscap_result_path: "{{ openscap_dir }}{{ openscap_result_filename }}"
+openscap_report_filename: "report-openscap.html"
+openscap_report_path: "{{ openscap_dir }}{{ openscap_report_filename }}"
 
+# vars for Lynis
+lynis_dir: "/tmp/"
+lynis_report_filename: "report-lynis.txt"
+lynis_report_path: "{{ lynis_dir }}{{ lynis_report_filename }}"
+lynis_repo: "https://github.com/CISOfy/lynis"

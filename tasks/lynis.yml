@@ -1,0 +1,47 @@
+---
+# tasks file for ansible-role-checkup
+
+- name: Clone Lynis repository
+  tags: lynis_clone
+  become: yes
+  git:
+    repo: "{{ lynis_repo }}"
+    dest: "{{ lynis_dir }}lynis"
+
+- name: Change Lynis repository ownership
+  tags: lynis_chown
+  become: yes
+  file:
+    path: "{{ lynis_dir }}lynis"
+    state: directory
+    recurse: yes
+    owner: root
+
+- name: Change Include repository ownership
+  tags: consts_chown
+  become: yes
+  file:
+    path: "{{ lynis_dir }}lynis/include"
+    state: directory
+    recurse: yes
+    mode: 0644
+
+- name: Run Lynis analysis
+  tags: lynis_run
+  become: yes
+  shell: ./lynis audit system --cronjob > ../{{ lynis_report_filename }}
+  args:
+    chdir: "{{ lynis_dir }}lynis"
+    creates: "{{ lynis_report_filename }}"
+
+- name: Fetch Lynis report
+  tags: fetch_lynis_report
+  fetch:
+    src: "{{ lynis_report_path }}"
+    dest: "{{ playbook_dir }}/"
+    flat: yes
+    validate: /usr/sbin/visudo -cf %s
+
+- debug: msg="Lyis Report is at file://{{ playbook_dir }}/{{ lynis_report_filename }}"
+  delegate_to: localhost
+  run_once: true

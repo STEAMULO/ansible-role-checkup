@@ -14,16 +14,16 @@
 
 - name: Run OpenSCAP analysis
   tags: openscap_run
-  command: oscap oval eval --results {{ result_path }} --report {{ report_path }} {{ oval_path }}
+  command: oscap oval eval --results {{ openscap_result_path }} --report {{ openscap_report_path }} {{ oval_path }}
 
 - name: Fetch OpenSCAP report
   tags: fetch_report
   fetch:
-    src: "{{ report_path }}"
+    src: "{{ openscap_report_path }}"
     dest: "{{ playbook_dir }}/"
     flat: yes
     validate: /usr/sbin/visudo -cf %s
 
-- debug: msg="OpenSCAP Report is at file://{{ playbook_dir }}/{{ report_filename }}"
+- debug: msg="OpenSCAP Report is at file://{{ playbook_dir }}/{{ openscap_report_filename }}"
   delegate_to: localhost
   run_once: true
