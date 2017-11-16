@@ -17,8 +17,8 @@
     recurse: yes
     owner: root
 
-- name: Change Include repository ownership
-  tags: consts_chown
+- name: Change Lynis repository permissions
+  tags: lynis_chmod
   become: yes
   file:
     path: "{{ lynis_dir }}lynis/include"
